@@ -2375,7 +2375,7 @@ def ideinit(args, suite=None):
     eclipseinit(args, suite)
     netbeansinit(args, suite)
 
-def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
+def javadoc(args, parser=None, docDir='javadoc', includeDeps=True, stdDoclet=True):
     """generate javadoc for some/all Java projects"""
 
     parser = ArgumentParser(prog='mx javadoc') if parser is None else parser
@@ -2475,10 +2475,14 @@ def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
             nowarnAPI = []
             if not args.warnAPI:
                 nowarnAPI.append('-XDignore.symbol.file')
+
+            # windowTitle onloy applies to the standard doclet processor
+            windowTitle = []
+            if stdDoclet:
+                windowTitle = ['-windowtitle', p.name + ' javadoc']
             try:
                 log('Generating {2} for {0} in {1}'.format(p.name, out, docDir))
                 run([java().javadoc, memory,
-                     '-windowtitle', p.name + ' javadoc',
                      '-XDignore.symbol.file',
                      '-classpath', cp,
                      '-quiet',
@@ -2488,6 +2492,7 @@ def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
                      links +
                      extraArgs +
                      nowarnAPI +
+                     windowTitle +
                      list(pkgs))
                 log('Generated {2} for {0} in {1}'.format(p.name, out, docDir))
             finally:
