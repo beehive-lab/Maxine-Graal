@@ -1115,7 +1115,7 @@ def site(args):
                     '--title', 'Graal OpenJDK Project Documentation',
                     '--dot-output-base', 'projects'] + args)
 
-def mx_init():
+def mx_init(suite):
     _vmbuild = 'product'
     commands = {
         'build': [build, '[-options]'],
@@ -1160,7 +1160,7 @@ def mx_init():
             'build': [build, '[-options] [product|debug|fastdebug]...']
         })
 
-    mx.commands.update(commands)
+    mx.update_commands(suite, commands)
 
 def mx_post_parse_cmd_line(opts):
     version = mx.java().version
