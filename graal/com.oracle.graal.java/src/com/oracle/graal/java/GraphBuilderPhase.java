@@ -114,10 +114,49 @@ public final class GraphBuilderPhase extends Phase {
 
     private Block[] loopHeaders;
 
+    public abstract static class DeoptCustomizer {
+        protected abstract void unresolvedField(GraphBuilderPhase phase, ValueNode receiver, JavaField field);
+
+        /*
+         * The following methods provides access to private methods of GraphBuilderPhase
+         * for external implementations of this interface.
+         */
+
+        protected StructuredGraph currentGraph(GraphBuilderPhase phase) {
+            return phase.currentGraph;
+        }
+
+        protected FrameStateBuilder frameState(GraphBuilderPhase phase) {
+            return phase.frameState;
+        }
+
+        protected ValueNode append(GraphBuilderPhase phase, FixedWithNextNode x) {
+            return phase.append(x);
+        }
+    }
+
+    private static class DefaultDeoptCustomizer extends DeoptCustomizer {
+        @Override
+        public void unresolvedField(GraphBuilderPhase phase, ValueNode receiver, JavaField field) {
+            Kind kind = field.getKind();
+            phase.append(phase.currentGraph.add(new DeoptimizeNode(DeoptimizationAction.InvalidateRecompile, DeoptimizationReason.Unresolved)));
+            phase.frameState.push(kind.getStackKind(), GraphBuilderPhase.append(ConstantNode.defaultForKind(kind, phase.currentGraph)));
+        }
+
+    }
+
+    private DeoptCustomizer deoptCustomizer;
+    private static DefaultDeoptCustomizer defaultDeoptCustomizer = new DefaultDeoptCustomizer();
+
     public GraphBuilderPhase(MetaAccessProvider runtime, GraphBuilderConfiguration graphBuilderConfig, OptimisticOptimizations optimisticOpts) {
+        this(runtime, graphBuilderConfig, optimisticOpts, defaultDeoptCustomizer);
+    }
+
+    public GraphBuilderPhase(MetaAccessProvider runtime, GraphBuilderConfiguration graphBuilderConfig, OptimisticOptimizations optimisticOpts, DeoptCustomizer deoptCustomizer) {
         this.graphBuilderConfig = graphBuilderConfig;
         this.optimisticOpts = optimisticOpts;
         this.runtime = runtime;
+        this.deoptCustomizer = deoptCustomizer;
         assert runtime != null;
     }
 
@@ -635,21 +674,21 @@ public final class GraphBuilderPhase extends Phase {
     private JavaType lookupType(int cpi, int bytecode) {
         eagerResolvingForSnippets(cpi, bytecode);
         JavaType result = constantPool.lookupType(cpi, bytecode);
-        assert !graphBuilderConfig.eagerResolvingForSnippets() || result instanceof ResolvedJavaType;
+        assert !graphBuilderConfig.unresolvedForSnippetsIsError() || result instanceof ResolvedJavaType;
         return result;
     }
 
     private JavaMethod lookupMethod(int cpi, int opcode) {
         eagerResolvingForSnippets(cpi, opcode);
         JavaMethod result = constantPool.lookupMethod(cpi, opcode);
-        assert !graphBuilderConfig.eagerResolvingForSnippets() || ((result instanceof ResolvedJavaMethod) && ((ResolvedJavaMethod) result).getDeclaringClass().isInitialized()) : result;
+        assert !graphBuilderConfig.unresolvedForSnippetsIsError() || ((result instanceof ResolvedJavaMethod) && ((ResolvedJavaMethod) result).getDeclaringClass().isInitialized()) : result;
         return result;
     }
 
     private JavaField lookupField(int cpi, int opcode) {
         eagerResolvingForSnippets(cpi, opcode);
         JavaField result = constantPool.lookupField(cpi, opcode);
-        assert !graphBuilderConfig.eagerResolvingForSnippets() || (result instanceof ResolvedJavaField && ((ResolvedJavaField) result).getDeclaringClass().isInitialized()) : result;
+        assert !graphBuilderConfig.unresolvedForSnippetsIsError() || (result instanceof ResolvedJavaField && ((ResolvedJavaField) result).getDeclaringClass().isInitialized()) : result;
         return result;
     }
 
@@ -734,7 +773,7 @@ public final class GraphBuilderPhase extends Phase {
     /**
      * Gets the kind of array elements for the array type code that appears in a
      * {@link Bytecodes#NEWARRAY} bytecode.
-     * 
+     *
      * @param code the array type code
      * @return the kind from the array type code
      */
@@ -808,8 +847,7 @@ public final class GraphBuilderPhase extends Phase {
             LoadFieldNode load = currentGraph.add(new LoadFieldNode(receiver, (ResolvedJavaField) field));
             appendOptimizedLoadField(kind, load);
         } else {
-            append(currentGraph.add(new DeoptimizeNode(DeoptimizationAction.InvalidateRecompile, DeoptimizationReason.Unresolved)));
-            frameState.push(kind.getStackKind(), append(ConstantNode.defaultForKind(kind, currentGraph)));
+            deoptCustomizer.unresolvedField(this, receiver, field);
         }
     }
 
@@ -910,8 +948,7 @@ public final class GraphBuilderPhase extends Phase {
                 appendOptimizedLoadField(kind, load);
             }
         } else {
-            append(currentGraph.add(new DeoptimizeNode(DeoptimizationAction.InvalidateRecompile, DeoptimizationReason.Unresolved)));
-            frameState.push(kind.getStackKind(), append(ConstantNode.defaultForKind(kind, currentGraph)));
+            deoptCustomizer.unresolvedField(this, null, field);
         }
     }
 
@@ -1146,7 +1183,7 @@ public final class GraphBuilderPhase extends Phase {
 
     /**
      * Helper function that sums up the probabilities of all keys that lead to a specific successor.
-     * 
+     *
      * @return an array of size successorCount with the accumulated probability for each successor.
      */
     private static double[] successorProbabilites(int successorCount, int[] keySuccessors, double[] keyProbabilities) {
