@@ -827,7 +827,7 @@ public class GraphBuilderPhase extends Phase {
     /**
      * Gets the kind of array elements for the array type code that appears in a
      * {@link Bytecodes#NEWARRAY} bytecode.
-     * 
+     *
      * @param code the array type code
      * @return the kind from the array type code
      */
@@ -1224,7 +1224,7 @@ public class GraphBuilderPhase extends Phase {
 
     /**
      * Helper function that sums up the probabilities of all keys that lead to a specific successor.
-     * 
+     *
      * @return an array of size successorCount with the accumulated probability for each successor.
      */
     private static double[] successorProbabilites(int successorCount, int[] keySuccessors, double[] keyProbabilities) {
