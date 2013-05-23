@@ -54,7 +54,7 @@ public class GraalCompiler {
 
     /**
      * Requests compilation of a given graph.
-     * 
+     *
      * @param graph the graph to be compiled
      * @param cc the calling convention for calls to the code compiled for {@code graph}
      * @param installedCodeOwner the method the compiled code will be
@@ -64,7 +64,7 @@ public class GraalCompiler {
      */
     public static CompilationResult compileGraph(final StructuredGraph graph, final CallingConvention cc, final ResolvedJavaMethod installedCodeOwner, final GraalCodeCacheProvider runtime,
                     final Replacements replacements, final Backend backend, final TargetDescription target, final GraphCache cache, final PhasePlan plan, final OptimisticOptimizations optimisticOpts,
-                    final SpeculationLog speculationLog) {
+                    final SpeculationLog speculationLog, final Suites suites) {
         final CompilationResult compilationResult = new CompilationResult();
         Debug.scope("GraalCompiler", new Object[]{graph, runtime}, new Runnable() {
 
@@ -73,7 +73,7 @@ public class GraalCompiler {
                 final LIR lir = Debug.scope("FrontEnd", new Callable<LIR>() {
 
                     public LIR call() {
-                        return emitHIR(runtime, target, graph, replacements, assumptions, cache, plan, optimisticOpts, speculationLog);
+                        return emitHIR(runtime, target, graph, replacements, assumptions, cache, plan, optimisticOpts, speculationLog, suites);
                     }
                 });
                 final LIRGenerator lirGen = Debug.scope("BackEnd", lir, new Callable<LIRGenerator>() {
@@ -107,13 +107,13 @@ public class GraalCompiler {
 
     /**
      * Builds the graph, optimizes it.
-     * 
+     *
      * @param runtime
-     * 
+     *
      * @param target
      */
-    public static LIR emitHIR(GraalCodeCacheProvider runtime, TargetDescription target, final StructuredGraph graph, Replacements replacements, Assumptions assumptions, GraphCache cache,
-                    PhasePlan plan, OptimisticOptimizations optimisticOpts, final SpeculationLog speculationLog) {
+    public static LIR emitHIR(GraalCodeCacheProvider runtime, TargetDescription target, final StructuredGraph graph, Replacements replacements, Assumptions assumptions, GraphCache cache, PhasePlan plan,
+                    OptimisticOptimizations optimisticOpts, final SpeculationLog speculationLog, final Suites suites) {
 
         if (speculationLog != null) {
             speculationLog.snapshot();
@@ -149,15 +149,16 @@ public class GraalCompiler {
         TypeProfileProxyNode.cleanFromGraph(graph);
 
         plan.runPhases(PhasePosition.HIGH_LEVEL, graph);
-        Suites.DEFAULT.getHighTier().apply(graph, highTierContext);
+
+        suites.getHighTier().apply(graph, highTierContext);
 
         MidTierContext midTierContext = new MidTierContext(runtime, assumptions, replacements, target, optimisticOpts);
-        Suites.DEFAULT.getMidTier().apply(graph, midTierContext);
+        suites.getMidTier().apply(graph, midTierContext);
 
         plan.runPhases(PhasePosition.LOW_LEVEL, graph);
 
         LowTierContext lowTierContext = new LowTierContext(runtime, assumptions, replacements, target);
-        Suites.DEFAULT.getLowTier().apply(graph, lowTierContext);
+        suites.getLowTier().apply(graph, lowTierContext);
         InliningPhase.storeStatisticsAfterLowTier(graph);
 
         final SchedulePhase schedule = new SchedulePhase();

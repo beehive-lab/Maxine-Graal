@@ -63,17 +63,17 @@ public class InliningPhase extends Phase {
 
     public InliningPhase(MetaAccessProvider runtime, Map<Invoke, Double> hints, Replacements replacements, Assumptions assumptions, GraphCache cache, PhasePlan plan,
                     OptimisticOptimizations optimisticOpts) {
-        this(runtime, replacements, assumptions, cache, plan, optimisticOpts, hints);
+        this(runtime, replacements, assumptions, cache, plan, optimisticOpts, hints, new GreedyInliningPolicy(replacements, hints));
     }
 
-    private InliningPhase(MetaAccessProvider runtime, Replacements replacements, Assumptions assumptions, GraphCache cache, PhasePlan plan, OptimisticOptimizations optimisticOpts,
-                    Map<Invoke, Double> hints) {
+    protected InliningPhase(MetaAccessProvider runtime, Replacements replacements, Assumptions assumptions, GraphCache cache, PhasePlan plan, OptimisticOptimizations optimisticOpts,
+                    Map<Invoke, Double> hints, InliningPolicy inliningPolicy) {
         this.runtime = runtime;
         this.replacements = replacements;
         this.compilationAssumptions = assumptions;
         this.cache = cache;
         this.plan = plan;
-        this.inliningPolicy = new GreedyInliningPolicy(replacements, hints);
+        this.inliningPolicy = inliningPolicy;
         this.optimisticOpts = optimisticOpts;
     }
 
@@ -403,7 +403,7 @@ public class InliningPhase extends Phase {
         }
     }
 
-    private static class GreedyInliningPolicy extends AbstractInliningPolicy {
+    protected static class GreedyInliningPolicy extends AbstractInliningPolicy {
 
         public GreedyInliningPolicy(Replacements replacements, Map<Invoke, Double> hints) {
             super(replacements, hints);
