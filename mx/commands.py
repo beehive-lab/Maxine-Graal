@@ -412,11 +412,14 @@ def _runInDebugShell(cmd, workingDir, logFile=None, findInOutput=None, respondTo
         log.close()
     return ret
 
-def jdkhome(args, vm=None):
-    """print the JDK directory selected for the 'vm' command"""
-
+def jdkhome(vm=None):
+    """return the JDK directory selected for the 'vm' command"""
     build = _vmbuild if _vmSourcesAvailable else 'product'
-    print join(_graal_home, 'jdk' + str(mx.java().version), build)
+    return join(_graal_home, 'jdk' + str(mx.java().version), build)
+   
+def print_jdkhome(args, vm=None):
+    """print the JDK directory selected for the 'vm' command"""
+    print jdkhome(vm)
 
 def initantbuild(args):
     """(re)generates an ant build file for producing graal.jar"""
@@ -1349,7 +1352,7 @@ def site(args):
                     '--title', 'Graal OpenJDK Project Documentation',
                     '--dot-output-base', 'projects'] + args)
 
-def mx_init():
+def mx_init(suite):
     _vmbuild = 'product'
     commands = {
         'build': [build, '[-options]'],
@@ -1360,7 +1363,7 @@ def mx_init():
         'hcfdis': [hcfdis, ''],
         'initantbuild' : [initantbuild, '[-options]'],
         'igv' : [igv, ''],
-        'jdkhome': [jdkhome, ''],
+        'jdkhome': [print_jdkhome, ''],
         'dacapo': [dacapo, '[[n] benchmark] [VM options|@DaCapo options]'],
         'scaladacapo': [scaladacapo, '[[n] benchmark] [VM options|@Scala DaCapo options]'],
         'specjvm2008': [specjvm2008, '[VM options|specjvm2008 options (-v, -ikv, -ict, -wt, -it)]'],
@@ -1396,7 +1399,7 @@ def mx_init():
             'build': [build, '[-options] [' + '|'.join(_vmbuildChoices) + ']...']
         })
 
-    mx.commands.update(commands)
+    mx.update_commands(suite, commands)
 
 def mx_post_parse_cmd_line(opts):#
     # TODO _minVersion check could probably be part of a Suite in mx?
