@@ -37,6 +37,7 @@ import com.oracle.graal.nodes.*;
 import com.oracle.graal.nodes.extended.*;
 import com.oracle.graal.phases.*;
 import com.oracle.graal.phases.PhasePlan.PhasePosition;
+import com.oracle.graal.phases.tiers.*;
 
 /**
  * use
@@ -84,7 +85,7 @@ public class AheadOfTimeCompilationTest extends GraalCompilerTest {
         editPhasePlan(method, graph, phasePlan);
         CallingConvention cc = getCallingConvention(runtime, Type.JavaCallee, graph.method(), false);
         final CompilationResult compResult = GraalCompiler.compileGraph(graph, cc, method, runtime, replacements, backend, runtime().getTarget(), null, phasePlan, OptimisticOptimizations.ALL,
-                        new SpeculationLog());
+                        new SpeculationLog(), Suites.createDefaultSuites());
         addMethod(method, compResult, graphCopy);
 
         GraalOptions.OptCanonicalizeReads.setValue(originalSetting);

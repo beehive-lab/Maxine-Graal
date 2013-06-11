@@ -39,6 +39,7 @@ import com.oracle.graal.nodes.spi.GraalCodeCacheProvider;
 import com.oracle.graal.phases.OptimisticOptimizations;
 import com.oracle.graal.phases.PhasePlan;
 import com.oracle.graal.phases.PhasePlan.PhasePosition;
+import com.oracle.graal.phases.tiers.*;
 import com.oracle.graal.ptx.PTX;
 
 public abstract class PTXTestBase extends GraalCompilerTest {
@@ -58,7 +59,7 @@ public abstract class PTXTestBase extends GraalCompilerTest {
         new PTXPhase().apply(graph);
         CallingConvention cc = getCallingConvention(runtime, Type.JavaCallee, graph.method(), false);
         CompilationResult result = GraalCompiler.compileGraph(graph, cc, graph.method(), runtime, graalRuntime().getReplacements(), ptxBackend, target, null, phasePlan, OptimisticOptimizations.NONE,
-                        new SpeculationLog());
+                        new SpeculationLog(), Suites.createDefaultSuites());
         return result;
     }
 
