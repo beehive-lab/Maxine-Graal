@@ -745,7 +745,7 @@ public class GraphBuilderPhase extends Phase {
 
     private void genThrow() {
         ValueNode exception = frameState.apop();
-        append(new FixedGuardNode(currentGraph.unique(new IsNullNode(exception)), NullCheckException, InvalidateReprofile, true));
+        append(createFixedGuardNode(currentGraph.unique(new IsNullNode(exception)), NullCheckException, InvalidateReprofile, true));
         lastInstr.setNext(handleException(exception, bci()));
     }
 
@@ -830,7 +830,7 @@ public class GraphBuilderPhase extends Phase {
     /**
      * Gets the kind of array elements for the array type code that appears in a
      * {@link Bytecodes#NEWARRAY} bytecode.
-     * 
+     *
      * @param code the array type code
      * @return the kind from the array type code
      */
@@ -1238,7 +1238,7 @@ public class GraphBuilderPhase extends Phase {
 
     /**
      * Helper function that sums up the probabilities of all keys that lead to a specific successor.
-     * 
+     *
      * @return an array of size successorCount with the accumulated probability for each successor.
      */
     private static double[] successorProbabilites(int successorCount, int[] keySuccessors, double[] keyProbabilities) {
@@ -1577,9 +1577,13 @@ public class GraphBuilderPhase extends Phase {
     private void createUnwind() {
         assert frameState.stackSize() == 1 : frameState;
         ValueNode exception = frameState.apop();
-        append(new FixedGuardNode(currentGraph.unique(new IsNullNode(exception)), NullCheckException, InvalidateReprofile, true));
+        append(createFixedGuardNode(currentGraph.unique(new IsNullNode(exception)), NullCheckException, InvalidateReprofile, true));
         synchronizedEpilogue(FrameState.AFTER_EXCEPTION_BCI);
         append(new UnwindNode(exception));
+    }
+
+    protected FixedGuardNode createFixedGuardNode(LogicNode condition, DeoptimizationReason deoptReason, DeoptimizationAction action, boolean negated) {
+        return new FixedGuardNode(condition, deoptReason, action, negated);
     }
 
     private void createReturn() {
