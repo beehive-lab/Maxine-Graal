@@ -1020,7 +1020,7 @@ public class InliningUtil {
 
     /**
      * Determines if inlining is possible at the given invoke node.
-     * 
+     *
      * @param invoke the invoke that should be inlined
      * @return an instance of InlineInfo, or null if no inlining is possible at the given invoke
      */
@@ -1231,6 +1231,8 @@ public class InliningUtil {
             return logNotInlinedMethod(invoke, "the invoke is dead code");
         } else if (!(invoke.callTarget() instanceof MethodCallTargetNode)) {
             return logNotInlinedMethod(invoke, "the invoke has already been lowered, or has been created as a low-level node");
+        } else if (!((MethodCallTargetNode) invoke.callTarget()).isResolved()) {
+            return logNotInlinedMethod(invoke, "target method is not resolved");
         } else if (((MethodCallTargetNode) invoke.callTarget()).targetMethod() == null) {
             return logNotInlinedMethod(invoke, "target method is null");
         } else if (invoke.stateAfter() == null) {
@@ -1279,7 +1281,7 @@ public class InliningUtil {
 
     /**
      * Performs an actual inlining, thereby replacing the given invoke with the given inlineGraph.
-     * 
+     *
      * @param invoke the invoke that will be replaced
      * @param inlineGraph the graph that the invoke will be replaced with
      * @param receiverNullCheck true if a null check needs to be generated for non-static inlinings,

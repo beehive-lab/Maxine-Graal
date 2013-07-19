@@ -41,7 +41,7 @@ public class NodeClass extends FieldIntrospection {
          * Using putIfAbsent doesn't work here, because the creation of NodeClass needs to be
          * serialized. (the NodeClass constructor looks at allClasses, and it also uses the static
          * field nextIterableId)
-         * 
+         *
          * The fact that ConcurrentHashMap.put and .get are used should make the double-checked
          * locking idiom work, since it internally uses volatile.
          */
@@ -252,7 +252,7 @@ public class NodeClass extends FieldIntrospection {
 
     /**
      * Describes an edge slot for a {@link NodeClass}.
-     * 
+     *
      * @see NodeClass#get(Node, Position)
      * @see NodeClass#getName(Position)
      */
@@ -343,7 +343,7 @@ public class NodeClass extends FieldIntrospection {
      * the fields are treated as {@link NodeList}s. All elements of these NodeLists will be visited
      * by the iterator as well. This iterator can be used to iterate over the inputs or successors
      * of a node.
-     * 
+     *
      * An iterator of this type will not return null values, unless the field values are modified
      * concurrently. Concurrent modifications are detected by an assertion on a best-effort basis.
      */
@@ -358,7 +358,7 @@ public class NodeClass extends FieldIntrospection {
 
         /**
          * Creates an iterator that will iterate over fields in the given node.
-         * 
+         *
          * @param node the node which contains the fields.
          * @param offsets the offsets of the fields.
          * @param directCount the number of fields that should be treated as fields of type
@@ -483,7 +483,7 @@ public class NodeClass extends FieldIntrospection {
 
     /**
      * Populates a given map with the names and values of all data fields.
-     * 
+     *
      * @param node the node from which to take the values.
      * @param properties a map that will be populated.
      */
@@ -697,7 +697,7 @@ public class NodeClass extends FieldIntrospection {
      * Clear all inputs in the given node. This is accomplished by setting input fields to null and
      * replacing input lists with new lists. (which is important so that this method can be used to
      * clear the inputs of cloned nodes.)
-     * 
+     *
      * @param node the node to be cleared
      */
     public void clearInputs(Node node) {
@@ -717,7 +717,7 @@ public class NodeClass extends FieldIntrospection {
      * Clear all successors in the given node. This is accomplished by setting successor fields to
      * null and replacing successor lists with new lists. (which is important so that this method
      * can be used to clear the successors of cloned nodes.)
-     * 
+     *
      * @param node the node to be cleared
      */
     public void clearSuccessors(Node node) {
@@ -736,7 +736,7 @@ public class NodeClass extends FieldIntrospection {
     /**
      * Copies the inputs from node to newNode. The nodes are expected to be of the exact same
      * NodeClass type.
-     * 
+     *
      * @param node the node from which the inputs should be copied.
      * @param newNode the node to which the inputs should be copied.
      */
@@ -758,7 +758,7 @@ public class NodeClass extends FieldIntrospection {
     /**
      * Copies the successors from node to newNode. The nodes are expected to be of the exact same
      * NodeClass type.
-     * 
+     *
      * @param node the node from which the successors should be copied.
      * @param newNode the node to which the successors should be copied.
      */

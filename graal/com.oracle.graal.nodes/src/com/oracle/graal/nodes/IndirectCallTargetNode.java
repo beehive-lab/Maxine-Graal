@@ -32,7 +32,7 @@ public class IndirectCallTargetNode extends LoweredCallTargetNode {
 
     @Input private ValueNode computedAddress;
 
-    public IndirectCallTargetNode(ValueNode computedAddress, List<ValueNode> arguments, Stamp returnStamp, JavaType[] signature, ResolvedJavaMethod target, CallingConvention.Type callType) {
+    public IndirectCallTargetNode(ValueNode computedAddress, List<ValueNode> arguments, Stamp returnStamp, JavaType[] signature, JavaMethod target, CallingConvention.Type callType) {
         super(arguments, returnStamp, signature, target, callType);
         this.computedAddress = computedAddress;
     }
@@ -43,6 +43,6 @@ public class IndirectCallTargetNode extends LoweredCallTargetNode {
 
     @Override
     public String targetName() {
-        return "Indirect#" + ((JavaMethod) target()).getName();
+        return "Indirect#" + target().getName();
     }
 }

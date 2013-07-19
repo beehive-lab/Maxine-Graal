@@ -37,7 +37,11 @@ The organizing principle of mx is a project suite. A suite is a directory
 containing one or more projects. It's not coincidental that this closely
 matches the layout of one or more projects in a Mercurial repository.
 The configuration information for a suite lives in an 'mx' sub-directory
-at the top level of the suite.
+at the top level of the suite. A suite is given a name by a 'suite=name'
+property in the 'mx/projects' file (if omitted the name is suite directory).
+An 'mx' subdirectory can be named as plain 'mx' or 'mxbasename', where
+'basename' is the os.path.basename of the suite directory.
+The latter is useful to avoid clashes in IDE project names.
 
 When launched, mx treats the current working directory as a suite.
 This is the primary suite. All other suites are called included suites.
@@ -137,7 +141,7 @@ by extension commands.
 Property values can use environment variables with Bash syntax (e.g. ${HOME}).
 """
 
-import sys, os, errno, time, subprocess, shlex, types, urllib2, contextlib, StringIO, zipfile, signal, xml.sax.saxutils, tempfile
+import sys, os, errno, time, subprocess, shlex, types, urllib2, contextlib, StringIO, zipfile, signal, xml.sax.saxutils, tempfile, fnmatch
 import xml.parsers.expat
 import shutil, re, xml.dom.minidom
 from collections import Callable
@@ -441,6 +445,21 @@ class Library(Dependency):
             if url.endswith('/') != self.path.endswith(os.sep):
                 abort('Path for dependency directory must have a URL ending with "/": path=' + self.path + ' url=' + url)
 
+    def __eq__(self, other):
+        if isinstance(other, Library):
+            if len(self.urls) == 0:
+                return self.path == other.path
+            else:
+                return self.urls == other.urls
+        else:
+            return NotImplemented
+        
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+            
     def get_path(self, resolve):
         path = self.path
         if not isabs(path):
@@ -468,15 +487,15 @@ class Library(Dependency):
             cp.append(path)
 
 class Suite:
-    def __init__(self, d, primary):
+    def __init__(self, d, mxDir, primary):
         self.dir = d
+        self.mxDir = mxDir
         self.projects = []
         self.libs = []
         self.dists = []
         self.includes = []
         self.commands = None
         self.primary = primary
-        mxDir = join(d, 'mx')
         self._load_env(mxDir)
         self._load_commands(mxDir)
         self._load_includes(mxDir)
@@ -590,7 +609,7 @@ class Suite:
             if hasattr(mod, 'mx_post_parse_cmd_line'):
                 self.mx_post_parse_cmd_line = mod.mx_post_parse_cmd_line
 
-            mod.mx_init()
+            mod.mx_init(self)
             self.commands = mod
 
     def _load_includes(self, mxDir):
@@ -600,7 +619,7 @@ class Suite:
                 for line in f:
                     include = expandvars_in_property(line.strip())
                     self.includes.append(include)
-                    _loadSuite(include, False)
+                    _loadSuite(os.path.abspath(include), False)
 
     def _load_env(self, mxDir):
         e = join(mxDir, 'env')
@@ -616,8 +635,7 @@ class Suite:
                         key, value = line.split('=', 1)
                         os.environ[key.strip()] = expandvars_in_property(value.strip())
     def _post_init(self, opts):
-        mxDir = join(self.dir, 'mx')
-        self._load_projects(mxDir)
+        self._load_projects(self.mxDir)
         for p in self.projects:
             existing = _projects.get(p.name)
             if existing is not None:
@@ -626,8 +644,9 @@ class Suite:
                 _projects[p.name] = p
         for l in self.libs:
             existing = _libs.get(l.name)
-            if existing is not None:
-                abort('cannot redefine library  ' + l.name)
+            # Check that suites that define same library are consistent
+            if existing is not None and existing != l:
+                abort('inconsistent library redefinition of ' + l.name + ' in ' + existing.suite.dir + ' and ' + l.suite.dir)
             _libs[l.name] = l
         for d in self.dists:
             existing = _dists.get(l.name)
@@ -725,12 +744,25 @@ def get_os():
         abort('Unknown operating system ' + sys.platform)
 
 def _loadSuite(d, primary=False):
-    mxDir = join(d, 'mx')
-    if not exists(mxDir) or not isdir(mxDir):
+    """
+    Load a suite from the 'mx' or 'mxbbb' subdirectory of d, where 'bbb' is basename of d
+    """
+    mxDefaultDir = join(d, 'mx')
+    name = os.path.basename(d)
+    mxTaggedDir = mxDefaultDir + name
+    mxDir = None
+    if exists(mxTaggedDir) and isdir(mxTaggedDir):
+        mxDir = mxTaggedDir
+    else:
+        if exists(mxDefaultDir) and isdir(mxDefaultDir):
+            mxDir = mxDefaultDir
+        
+    if mxDir is None:
         return None
+
     if len([s for s in _suites.itervalues() if s.dir == d]) == 0:
-        s = Suite(d, primary)
-        _suites[s.name] = s
+        s = Suite(d, mxDir, primary)
+        _suites[name] = s
         return s
 
 def suites():
@@ -877,7 +909,8 @@ class ArgParser(ArgumentParser):
 
     def __init__(self):
         self.java_initialized = False
-        ArgumentParser.__init__(self, prog='mx')
+        # this doesn't resolve the right way, but can't figure out how to override _handle_conflict_resolve in _ActionsContainer
+        ArgumentParser.__init__(self, prog='mx', conflict_handler='resolve')
 
         self.add_argument('-v', action='store_true', dest='verbose', help='enable verbose output')
         self.add_argument('-V', action='store_true', dest='very_verbose', help='enable very verbose output')
@@ -927,6 +960,9 @@ class ArgParser(ArgumentParser):
 
         commandAndArgs = opts.__dict__.pop('commandAndArgs')
         return opts, commandAndArgs
+
+    def _handle_conflict_resolve(self, action, conflicting_actions):
+        self._handle_conflict_error(action, conflicting_actions)
 
 def _format_commands():
     msg = '\navailable commands:\n\n'
@@ -2271,20 +2307,22 @@ def eclipseinit(args, suite=None, buildProcessorJars=True):
                     out.element('classpathentry', {'combineaccessrules' : 'false', 'exported' : 'true', 'kind' : 'src', 'path' : '/' + getattr(dep, 'eclipse.project')})
                 else:
                     path = dep.path
-                    if dep.mustExist:
-                        dep.get_path(resolve=True)
-                        if not isabs(path):
-                            # Relative paths for "lib" class path entries have various semantics depending on the Eclipse
-                            # version being used (e.g. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274737) so it's
-                            # safest to simply use absolute paths.
-                            path = join(suite.dir, path)
+                    dep.get_path(resolve=True)
+                    if not exists(path) and not dep.mustExist:
+                        continue;
 
-                        attributes = {'exported' : 'true', 'kind' : 'lib', 'path' : path}
+                    if not isabs(path):
+                        # Relative paths for "lib" class path entries have various semantics depending on the Eclipse
+                        # version being used (e.g. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274737) so it's
+                        # safest to simply use absolute paths.
+                        path = join(suite.dir, path)
 
-                        sourcePath = dep.get_source_path(resolve=True)
-                        if sourcePath is not None:
-                            attributes['sourcepath'] = sourcePath
-                        out.element('classpathentry', attributes)
+                    attributes = {'exported' : 'true', 'kind' : 'lib', 'path' : path}
+
+                    sourcePath = dep.get_source_path(resolve=True)
+                    if sourcePath is not None:
+                        attributes['sourcepath'] = sourcePath
+                    out.element('classpathentry', attributes)
             else:
                 out.element('classpathentry', {'combineaccessrules' : 'false', 'exported' : 'true', 'kind' : 'src', 'path' : '/' + dep.name})
 
@@ -2369,7 +2407,7 @@ def eclipseinit(args, suite=None, buildProcessorJars=True):
         if not exists(settingsDir):
             os.mkdir(settingsDir)
 
-        eclipseSettingsDir = join(suite.dir, 'mx', 'eclipse-settings')
+        eclipseSettingsDir = join(suite.mxDir, 'eclipse-settings')
         if exists(eclipseSettingsDir):
             for name in os.listdir(eclipseSettingsDir):
                 if name == "org.eclipse.jdt.apt.core.prefs" and not len(p.annotation_processors()) > 0:
@@ -2852,7 +2890,7 @@ def fsckprojects(args):
                         shutil.rmtree(currentDir)
                         log('Deleted ' + currentDir)
 
-def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
+def javadoc(args, parser=None, docDir='javadoc', includeDeps=True, stdDoclet=True):
     """generate javadoc for some/all Java projects"""
 
     parser = ArgumentParser(prog='mx javadoc') if parser is None else parser
@@ -2952,10 +2990,14 @@ def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
             nowarnAPI = []
             if not args.warnAPI:
                 nowarnAPI.append('-XDignore.symbol.file')
+
+            # windowTitle onloy applies to the standard doclet processor
+            windowTitle = []
+            if stdDoclet:
+                windowTitle = ['-windowtitle', p.name + ' javadoc']
             try:
                 log('Generating {2} for {0} in {1}'.format(p.name, out, docDir))
                 run([java().javadoc, memory,
-                     '-windowtitle', p.name + ' javadoc',
                      '-XDignore.symbol.file',
                      '-classpath', cp,
                      '-quiet',
@@ -2965,6 +3007,7 @@ def javadoc(args, parser=None, docDir='javadoc', includeDeps=True):
                      links +
                      extraArgs +
                      nowarnAPI +
+                     windowTitle +
                      list(pkgs))
                 log('Generated {2} for {0} in {1}'.format(p.name, out, docDir))
             finally:
@@ -3289,6 +3332,14 @@ def add_argument(*args, **kwargs):
     assert _argParser is not None
     _argParser.add_argument(*args, **kwargs)
 
+def update_commands(suite, new_commands):
+    for key, value in new_commands.iteritems():
+        if commands.has_key(key) and not suite.primary:
+            pass
+            # print("WARNING: attempt to redefine command '" + key + "' in suite " + suite.dir)
+        else:
+            commands[key] = value
+            
 # Table of commands in alphabetical order.
 # Keys are command names, value are lists: [<function>, <usage msg>, <format args to doc string of function>...]
 # If any of the format args are instances of Callable, then they are called with an 'env' are before being
@@ -3320,9 +3371,12 @@ _argParser = ArgParser()
 
 def _findPrimarySuite():
     def is_suite_dir(d):
-        mxDir = join(d, 'mx')
-        if exists(mxDir) and isdir(mxDir) and exists(join(mxDir, 'projects')):
-            return dirname(mxDir)
+        for f in os.listdir('.'):
+            if fnmatch.fnmatch(f, 'mx*'):
+                mxDir = join(d, f)
+                if exists(mxDir) and isdir(mxDir) and exists(join(mxDir, 'projects')):
+                    return dirname(mxDir)
+
 
     # try current working directory first
     if is_suite_dir(os.getcwd()):

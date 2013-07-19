@@ -32,7 +32,7 @@ import com.oracle.graal.phases.*;
 
 public final class Suites {
 
-    static class Options {
+    public static class Options {
 
         // @formatter:off
         @Option(help = "The compiler configuration to use")
