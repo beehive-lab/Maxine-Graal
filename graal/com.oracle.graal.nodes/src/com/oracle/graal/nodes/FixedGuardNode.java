@@ -31,12 +31,18 @@ import com.oracle.graal.nodes.type.*;
 import com.oracle.graal.nodes.util.*;
 
 @NodeInfo(nameTemplate = "FixedGuard(!={p#negated}) {p#reason/s}")
-public final class FixedGuardNode extends DeoptimizingFixedWithNextNode implements Simplifiable, Lowerable, Node.IterableNodeType, Negatable, GuardingNode {
+public class FixedGuardNode extends DeoptimizingFixedWithNextNode implements Simplifiable, Lowerable, Node.IterableNodeType, Negatable, GuardingNode {
 
     @Input private LogicNode condition;
     private final DeoptimizationReason reason;
     private final DeoptimizationAction action;
     private boolean negated;
+
+    private static boolean suppressDeoptimize;
+
+    public static void suppressDeoptimize() {
+        suppressDeoptimize = true;
+    }
 
     public LogicNode condition() {
         return condition;
@@ -85,14 +91,18 @@ public final class FixedGuardNode extends DeoptimizingFixedWithNextNode implemen
         if (condition instanceof LogicConstantNode) {
             LogicConstantNode c = (LogicConstantNode) condition;
             if (c.getValue() == negated) {
-                FixedNode next = this.next();
-                if (next != null) {
-                    tool.deleteBranch(next);
-                }
+                if (suppressDeoptimize) {
+                    return;
+                } else {
+                    FixedNode next = this.next();
+                    if (next != null) {
+                        tool.deleteBranch(next);
+                    }
 
-                DeoptimizeNode deopt = graph().add(new DeoptimizeNode(DeoptimizationAction.InvalidateRecompile, reason));
-                deopt.setDeoptimizationState(getDeoptimizationState());
-                setNext(deopt);
+                    DeoptimizeNode deopt = graph().add(new DeoptimizeNode(DeoptimizationAction.InvalidateRecompile, reason));
+                    deopt.setDeoptimizationState(getDeoptimizationState());
+                    setNext(deopt);
+                }
             }
             this.replaceAtUsages(BeginNode.prevBegin(this));
             graph().removeFixed(this);
@@ -104,18 +114,20 @@ public final class FixedGuardNode extends DeoptimizingFixedWithNextNode implemen
         if (loweringType == LoweringType.BEFORE_GUARDS) {
             tool.getRuntime().lower(this, tool);
         } else {
-            FixedNode next = next();
-            setNext(null);
-            DeoptimizeNode deopt = graph().add(new DeoptimizeNode(action, reason));
-            deopt.setDeoptimizationState(getDeoptimizationState());
-            IfNode ifNode;
-            if (negated) {
-                ifNode = graph().add(new IfNode(condition, deopt, next, 0));
-            } else {
-                ifNode = graph().add(new IfNode(condition, next, deopt, 1));
+            if (!suppressDeoptimize) {
+                FixedNode next = next();
+                setNext(null);
+                DeoptimizeNode deopt = graph().add(new DeoptimizeNode(action, reason));
+                deopt.setDeoptimizationState(getDeoptimizationState());
+                IfNode ifNode;
+                if (negated) {
+                    ifNode = graph().add(new IfNode(condition, deopt, next, 0));
+                } else {
+                    ifNode = graph().add(new IfNode(condition, next, deopt, 1));
+                }
+                ((FixedWithNextNode) predecessor()).setNext(ifNode);
+                GraphUtil.killWithUnusedFloatingInputs(this);
             }
-            ((FixedWithNextNode) predecessor()).setNext(ifNode);
-            GraphUtil.killWithUnusedFloatingInputs(this);
         }
     }
 
