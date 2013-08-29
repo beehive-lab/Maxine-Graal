@@ -32,7 +32,7 @@ import com.oracle.graal.phases.*;
 
 public final class Suites {
 
-    static class Options {
+    public static class Options {
 
         // @formatter:off
         @Option(help = "The compiler configuration to use")
@@ -121,6 +121,10 @@ public final class Suites {
         if (config == null) {
             throw new GraalInternalError("unknown compiler configuration: " + name);
         }
+        return new Suites(config);
+    }
+
+    public static Suites createSuites(CompilerConfiguration config) {
         return new Suites(config);
     }
 

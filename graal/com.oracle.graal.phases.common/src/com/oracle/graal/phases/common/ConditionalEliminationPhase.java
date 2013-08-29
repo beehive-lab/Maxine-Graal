@@ -587,7 +587,7 @@ public class ConditionalEliminationPhase extends Phase {
                     ValueNode receiver = callTarget.receiver();
                     if (receiver != null && (callTarget.invokeKind() == InvokeKind.Interface || callTarget.invokeKind() == InvokeKind.Virtual)) {
                         ResolvedJavaType type = state.getNodeType(receiver);
-                        if (type != ObjectStamp.typeOrNull(receiver)) {
+                        if (type != ObjectStamp.typeOrNull(receiver) && callTarget.isResolved()) {
                             ResolvedJavaMethod method = type.resolveMethod(callTarget.targetMethod());
                             if (method != null) {
                                 if ((method.getModifiers() & Modifier.FINAL) != 0 || (type.getModifiers() & Modifier.FINAL) != 0) {
