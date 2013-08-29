@@ -50,7 +50,7 @@ import com.oracle.graal.phases.tiers.*;
 
 public class InliningPhase extends AbstractInliningPhase {
 
-    static class Options {
+    public static class Options {
 
         // @formatter:off
         @Option(help = "Unconditionally inline intrinsics")
@@ -416,7 +416,7 @@ public class InliningPhase extends AbstractInliningPhase {
         }
     }
 
-    private static final class GreedyInliningPolicy extends AbstractInliningPolicy {
+    public static class GreedyInliningPolicy extends AbstractInliningPolicy {
 
         public GreedyInliningPolicy(Map<Invoke, Double> hints) {
             super(hints);
