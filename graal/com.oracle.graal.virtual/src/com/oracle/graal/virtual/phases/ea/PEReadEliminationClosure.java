@@ -134,7 +134,7 @@ public class PEReadEliminationClosure extends PartialEscapeClosure<PEReadElimina
 
     private class ReadEliminationMergeProcessor extends MergeProcessor {
 
-        public ReadEliminationMergeProcessor(Block mergeBlock) {
+        ReadEliminationMergeProcessor(Block mergeBlock) {
             super(mergeBlock);
         }
 

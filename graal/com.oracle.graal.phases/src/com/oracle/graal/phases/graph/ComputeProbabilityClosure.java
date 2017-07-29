@@ -224,7 +224,7 @@ public class ComputeProbabilityClosure {
         public HashSet<LoopInfo> loops;
         public LoopInfo loopInfo;
 
-        public Probability(double probability, HashSet<LoopInfo> loops) {
+        Probability(double probability, HashSet<LoopInfo> loops) {
             assert probability >= 0.0;
             this.probability = probability;
             this.loops = new HashSet<>(4);
@@ -319,7 +319,7 @@ public class ComputeProbabilityClosure {
 
     private class PropagateProbability extends PostOrderNodeIterator<Probability> {
 
-        public PropagateProbability(FixedNode start) {
+        PropagateProbability(FixedNode start) {
             super(start, new Probability(1d, null));
         }
 
@@ -333,7 +333,7 @@ public class ComputeProbabilityClosure {
 
         public double count;
 
-        public LoopCount(double count) {
+        LoopCount(double count) {
             this.count = count;
         }
 
@@ -365,7 +365,7 @@ public class ComputeProbabilityClosure {
 
     private class PropagateLoopFrequency extends PostOrderNodeIterator<LoopCount> {
 
-        public PropagateLoopFrequency(FixedNode start) {
+        PropagateLoopFrequency(FixedNode start) {
             super(start, new LoopCount(1d));
         }
 

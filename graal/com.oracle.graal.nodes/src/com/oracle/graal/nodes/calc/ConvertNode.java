@@ -35,7 +35,7 @@ import com.oracle.graal.nodes.type.*;
  */
 public class ConvertNode extends FloatingNode implements Canonicalizable, Lowerable, ArithmeticLIRLowerable {
 
-    public static enum Op {
+    public enum Op {
         I2L(Int, Long, true),
         L2I(Long, Int, false),
         I2B(Int, Byte, false),
@@ -61,7 +61,7 @@ public class ConvertNode extends FloatingNode implements Canonicalizable, Lowera
         public final Kind to;
         public final boolean lossless;
 
-        private Op(Kind from, Kind to, boolean lossless) {
+        Op(Kind from, Kind to, boolean lossless) {
             this.from = from;
             this.to = to;
             this.lossless = lossless;

@@ -97,7 +97,7 @@ public final class TimerImpl extends DebugValue implements DebugTimer {
 
     private final class SystemNanosTimer extends AbstractTimer {
 
-        public SystemNanosTimer(long startTime, long previousValueToSubstract) {
+        SystemNanosTimer(long startTime, long previousValueToSubstract) {
             super(startTime, previousValueToSubstract);
         }
 
@@ -109,7 +109,7 @@ public final class TimerImpl extends DebugValue implements DebugTimer {
 
     private final class CpuTimeTimer extends AbstractTimer {
 
-        public CpuTimeTimer(long startTime, long previousValueToSubstract) {
+        CpuTimeTimer(long startTime, long previousValueToSubstract) {
             super(startTime, previousValueToSubstract);
         }
 

@@ -61,7 +61,7 @@ public class NodeFlood implements Iterable<Node> {
 
         private final Queue<Node> queue;
 
-        public QueueConsumingIterator(Queue<Node> queue) {
+        QueueConsumingIterator(Queue<Node> queue) {
             this.queue = queue;
         }
 
@@ -92,7 +92,7 @@ public class NodeFlood implements Iterable<Node> {
         private Iterator<Node> nodes;
         private Node nextNode;
 
-        public UnmarkedNodeIterator(NodeBitMap visited, Iterator<Node> nodes) {
+        UnmarkedNodeIterator(NodeBitMap visited, Iterator<Node> nodes) {
             this.visited = visited;
             this.nodes = nodes;
             forward();

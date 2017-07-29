@@ -39,10 +39,10 @@ public class TargetMethodAssembler {
 
     private static class ExceptionInfo {
 
-        public final int codeOffset;
-        public final LabelRef exceptionEdge;
+        final int codeOffset;
+        final LabelRef exceptionEdge;
 
-        public ExceptionInfo(int pcOffset, LabelRef exceptionEdge) {
+        ExceptionInfo(int pcOffset, LabelRef exceptionEdge) {
             this.codeOffset = pcOffset;
             this.exceptionEdge = exceptionEdge;
         }

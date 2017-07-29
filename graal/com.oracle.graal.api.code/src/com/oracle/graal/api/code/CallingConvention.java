@@ -59,7 +59,7 @@ public class CallingConvention {
 
         public static final Type[] VALUES = values();
 
-        private Type(boolean out) {
+        Type(boolean out) {
             this.out = out;
         }
     }

@@ -114,7 +114,7 @@ public class GraphBuilderPhase extends Phase {
      */
     private static class BlockPlaceholderNode extends FixedWithNextNode implements Node.IterableNodeType {
 
-        public BlockPlaceholderNode() {
+        BlockPlaceholderNode() {
             super(StampFactory.forVoid());
         }
     }
@@ -1318,7 +1318,7 @@ public class GraphBuilderPhase extends Phase {
         int blockIndex;
         int actualIndex;
 
-        public SuccessorInfo(int blockSuccessorIndex) {
+        SuccessorInfo(int blockSuccessorIndex) {
             this.blockIndex = blockSuccessorIndex;
             actualIndex = -1;
         }
@@ -1367,7 +1367,7 @@ public class GraphBuilderPhase extends Phase {
         FixedNode fixed;
         FrameStateBuilder state;
 
-        public Target(FixedNode fixed, FrameStateBuilder state) {
+        Target(FixedNode fixed, FrameStateBuilder state) {
             this.fixed = fixed;
             this.state = state;
         }

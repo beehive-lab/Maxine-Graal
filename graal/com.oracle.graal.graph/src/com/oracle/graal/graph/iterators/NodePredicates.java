@@ -208,7 +208,7 @@ public abstract class NodePredicates {
 
         private final Node u;
 
-        public EqualsPredicate(Node u) {
+        EqualsPredicate(Node u) {
             this.u = u;
         }
 
@@ -222,7 +222,7 @@ public abstract class NodePredicates {
 
         private final Node u;
 
-        public NotEqualsPredicate(Node u) {
+        NotEqualsPredicate(Node u) {
             this.u = u;
         }
 

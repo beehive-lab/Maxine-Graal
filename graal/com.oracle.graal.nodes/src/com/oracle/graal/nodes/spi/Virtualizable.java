@@ -33,11 +33,11 @@ import com.oracle.graal.nodes.virtual.*;
  */
 public interface Virtualizable {
 
-    public static enum EscapeState {
+    enum EscapeState {
         Virtual, ThreadLocal, Global
     }
 
-    public abstract static class State {
+    abstract class State {
 
         public abstract EscapeState getState();
 

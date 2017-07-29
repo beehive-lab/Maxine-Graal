@@ -37,7 +37,7 @@ public class ReadEliminationBlockState extends EffectsBlockState<ReadElimination
         public final ValueNode object;
         public final T identity;
 
-        public CacheEntry(ValueNode object, T identity) {
+        CacheEntry(ValueNode object, T identity) {
             this.object = object;
             this.identity = identity;
         }
@@ -66,7 +66,7 @@ public class ReadEliminationBlockState extends EffectsBlockState<ReadElimination
 
     static class LoadCacheEntry extends CacheEntry<ResolvedJavaField> {
 
-        public LoadCacheEntry(ValueNode object, ResolvedJavaField identity) {
+        LoadCacheEntry(ValueNode object, ResolvedJavaField identity) {
             super(object, identity);
         }
 
@@ -83,7 +83,7 @@ public class ReadEliminationBlockState extends EffectsBlockState<ReadElimination
 
     static class ReadCacheEntry extends CacheEntry<LocationNode> {
 
-        public ReadCacheEntry(ValueNode object, LocationNode identity) {
+        ReadCacheEntry(ValueNode object, LocationNode identity) {
             super(object, identity);
         }
 

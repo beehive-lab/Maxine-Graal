@@ -68,11 +68,11 @@ public final class SchedulePhase extends Phase {
 
     }
 
-    public static enum SchedulingStrategy {
+    public enum SchedulingStrategy {
         EARLIEST, LATEST, LATEST_OUT_OF_LOOPS
     }
 
-    public static enum MemoryScheduling {
+    public enum MemoryScheduling {
         NONE, CONSERVATIVE, OPTIMAL
     }
 
@@ -649,7 +649,7 @@ public final class SchedulePhase extends Phase {
 
         public Block block;
 
-        public CommonDominatorBlockClosure(Block block) {
+        CommonDominatorBlockClosure(Block block) {
             this.block = block;
         }
 

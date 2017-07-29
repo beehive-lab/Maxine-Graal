@@ -142,7 +142,7 @@ public class LIRInstructionClass extends LIRIntrospection {
         private String opcodeConstant;
         private long opcodeOffset;
 
-        public InstructionFieldScanner(CalcOffset calc) {
+        InstructionFieldScanner(CalcOffset calc) {
             super(calc);
 
             valueAnnotations.put(LIRInstruction.Use.class, new OperandModeAnnotation());

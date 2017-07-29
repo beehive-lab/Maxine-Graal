@@ -45,10 +45,10 @@ public final class Interval {
      */
     static final class Pair {
 
-        public final Interval first;
-        public final Interval second;
+        final Interval first;
+        final Interval second;
 
-        public Pair(Interval first, Interval second) {
+        Pair(Interval first, Interval second) {
             this.first = first;
             this.second = second;
         }
@@ -69,7 +69,7 @@ public final class Interval {
          */
         public Interval any;
 
-        public RegisterBindingLists(Interval fixed, Interval any) {
+        RegisterBindingLists(Interval fixed, Interval any) {
             this.fixed = fixed;
             this.any = any;
         }

@@ -55,7 +55,7 @@ public class Graph {
 
         private final Node node;
 
-        public CacheEntry(Node node) {
+        CacheEntry(Node node) {
             this.node = node;
         }
 
@@ -256,11 +256,11 @@ public class Graph {
 
         private int index;
 
-        public NodeIterator() {
+        NodeIterator() {
             this(0);
         }
 
-        public NodeIterator(int index) {
+        NodeIterator(int index) {
             this.index = index - 1;
             forward();
         }
@@ -348,7 +348,7 @@ public class Graph {
         private int currentIdIndex;
         private boolean needsForward;
 
-        public TypedNodeIterator(NodeClass clazz) {
+        TypedNodeIterator(NodeClass clazz) {
             ids = clazz.iterableIds();
             currentIdIndex = 0;
             current = new Node[ids.length];
@@ -616,7 +616,7 @@ public class Graph {
 
         private final Map<Node, Node> map;
 
-        public MapReplacement(Map<Node, Node> map) {
+        MapReplacement(Map<Node, Node> map) {
             this.map = map;
         }
 

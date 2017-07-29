@@ -38,7 +38,7 @@ public interface ResolvedJavaType extends JavaType {
      * compiled code may need to reference individually. These may or may not be different objects
      * or data structures, depending on the runtime system.
      */
-    public enum Representation {
+    enum Representation {
         /**
          * The runtime representation of the Java class object of this type.
          */

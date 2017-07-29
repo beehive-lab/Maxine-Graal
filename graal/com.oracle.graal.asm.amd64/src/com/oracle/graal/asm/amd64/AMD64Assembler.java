@@ -72,7 +72,7 @@ public class AMD64Assembler extends AbstractAssembler {
         private final int value;
         private final String operator;
 
-        private ConditionFlag(int value, String operator) {
+        ConditionFlag(int value, String operator) {
             this.value = value;
             this.operator = operator;
         }

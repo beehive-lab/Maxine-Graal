@@ -54,7 +54,7 @@ public class ComputeInliningRelevanceClosure {
         private double currentProbability;
         private double parentRelevance;
 
-        public ComputeInliningRelevanceIterator(StructuredGraph graph) {
+        ComputeInliningRelevanceIterator(StructuredGraph graph) {
             super(graph);
             this.scopes = computeScopesAndProbabilities();
         }
@@ -215,7 +215,7 @@ public class ComputeInliningRelevanceClosure {
         public final Scope parent;
         public double probability;
 
-        public Scope(FixedNode start, Scope parent) {
+        Scope(FixedNode start, Scope parent) {
             this.start = start;
             this.parent = parent;
         }

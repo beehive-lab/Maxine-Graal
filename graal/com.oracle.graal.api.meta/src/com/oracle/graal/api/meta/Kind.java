@@ -69,7 +69,7 @@ public enum Kind implements PlatformKind {
     private final Class primitiveJavaClass;
     private final Class boxedJavaClass;
 
-    private Kind(char typeChar, String javaName, boolean isStackInt, Class primitiveJavaClass, Class boxedJavasClass) {
+    Kind(char typeChar, String javaName, boolean isStackInt, Class primitiveJavaClass, Class boxedJavasClass) {
         this.typeChar = typeChar;
         this.javaName = javaName;
         this.isStackInt = isStackInt;

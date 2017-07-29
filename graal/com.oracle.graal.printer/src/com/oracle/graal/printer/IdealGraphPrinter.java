@@ -45,7 +45,7 @@ class IdealGraphPrinter extends BasicIdealGraphPrinter implements GraphPrinter {
     /**
      * Creates a new {@link IdealGraphPrinter} that writes to the specified output stream.
      */
-    public IdealGraphPrinter(OutputStream stream) {
+    IdealGraphPrinter(OutputStream stream) {
         super(stream);
         this.begin();
     }

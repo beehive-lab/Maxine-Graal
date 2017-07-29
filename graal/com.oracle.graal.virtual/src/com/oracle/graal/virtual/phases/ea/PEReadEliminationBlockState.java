@@ -37,7 +37,7 @@ public class PEReadEliminationBlockState extends PartialEscapeBlockState<PEReadE
         public final ResolvedJavaField identity;
         public final ValueNode object;
 
-        public ReadCacheEntry(ResolvedJavaField identity, ValueNode object) {
+        ReadCacheEntry(ResolvedJavaField identity, ValueNode object) {
             this.identity = identity;
             this.object = object;
         }

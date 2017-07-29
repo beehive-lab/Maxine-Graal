@@ -78,7 +78,7 @@ public final class AMD64Address extends AbstractAddress {
     public enum Scale {
         Times1(1, 0), Times2(2, 1), Times4(4, 2), Times8(8, 3);
 
-        private Scale(int value, int log2) {
+        Scale(int value, int log2) {
             this.value = value;
             this.log2 = log2;
         }

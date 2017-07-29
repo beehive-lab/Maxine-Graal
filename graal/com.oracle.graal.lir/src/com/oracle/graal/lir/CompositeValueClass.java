@@ -97,7 +97,7 @@ public class CompositeValueClass extends LIRIntrospection {
 
     private static class ValueFieldScanner extends FieldScanner {
 
-        public ValueFieldScanner(CalcOffset calc) {
+        ValueFieldScanner(CalcOffset calc) {
             super(calc);
 
             valueAnnotations.put(CompositeValue.Component.class, new OperandModeAnnotation());

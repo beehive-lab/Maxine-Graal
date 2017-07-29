@@ -197,7 +197,7 @@ public class TailDuplicationPhase extends BasePhase<PhaseContext> {
          * @param replacements A list of replacement {@link PiNode}s, or null. If this is non-null,
          *            then the size of the list needs to match the number of end nodes at the merge.
          */
-        public DuplicationOperation(MergeNode merge, List<GuardedValueNode> replacements) {
+        DuplicationOperation(MergeNode merge, List<GuardedValueNode> replacements) {
             this.merge = merge;
             this.replacements = replacements;
             this.graph = merge.graph();

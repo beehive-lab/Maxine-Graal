@@ -41,16 +41,16 @@ public class FloatingReadPhase extends Phase {
 
         private IdentityHashMap<LocationIdentity, ValueNode> lastMemorySnapshot;
 
-        public MemoryMap(MemoryMap memoryMap) {
+        MemoryMap(MemoryMap memoryMap) {
             lastMemorySnapshot = new IdentityHashMap<>(memoryMap.lastMemorySnapshot);
         }
 
-        public MemoryMap(StartNode start) {
+        MemoryMap(StartNode start) {
             this();
             lastMemorySnapshot.put(ANY_LOCATION, start);
         }
 
-        public MemoryMap() {
+        MemoryMap() {
             lastMemorySnapshot = new IdentityHashMap<>();
         }
 
@@ -85,7 +85,7 @@ public class FloatingReadPhase extends Phase {
 
         private final Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops;
 
-        public CollectMemoryCheckpointsClosure(Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops) {
+        CollectMemoryCheckpointsClosure(Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops) {
             this.modifiedInLoops = modifiedInLoops;
         }
 
@@ -137,7 +137,7 @@ public class FloatingReadPhase extends Phase {
 
         private final Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops;
 
-        public FloatingReadClosure(Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops) {
+        FloatingReadClosure(Map<LoopBeginNode, Set<LocationIdentity>> modifiedInLoops) {
             this.modifiedInLoops = modifiedInLoops;
         }
 

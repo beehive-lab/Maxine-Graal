@@ -72,13 +72,15 @@ public @interface Snippet {
      * <li>constructors of {@link Throwable} classes</li>
      * </ul>
      */
-    public static class DefaultSnippetInliningPolicy implements SnippetInliningPolicy {
+    class DefaultSnippetInliningPolicy implements SnippetInliningPolicy {
 
         private final MetaAccessProvider metaAccess;
 
+        // Checkstyle: stop
         public DefaultSnippetInliningPolicy(MetaAccessProvider metaAccess) {
             this.metaAccess = metaAccess;
         }
+        // Checkstyle: resume
 
         @Override
         public boolean shouldInline(ResolvedJavaMethod method, ResolvedJavaMethod caller) {

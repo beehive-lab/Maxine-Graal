@@ -24,7 +24,7 @@ package com.oracle.graal.nodes.spi;
 
 public interface Lowerable {
 
-    public enum LoweringType {
+    enum LoweringType {
         BEFORE_GUARDS, AFTER_GUARDS, AFTER_FSA
     }
 

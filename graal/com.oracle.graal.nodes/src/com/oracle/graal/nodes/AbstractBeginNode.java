@@ -157,7 +157,7 @@ public abstract class AbstractBeginNode extends FixedWithNextNode implements Sta
 
         private FixedNode current;
 
-        public BlockNodeIterator(FixedNode next) {
+        BlockNodeIterator(FixedNode next) {
             this.current = next;
         }
 

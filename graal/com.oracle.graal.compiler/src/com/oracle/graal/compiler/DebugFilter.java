@@ -154,7 +154,7 @@ class DebugFilter {
 
         final Pattern pattern;
 
-        public Term(String filter) {
+        Term(String filter) {
             if (filter.isEmpty()) {
                 this.pattern = null;
             } else if (filter.contains("*") || filter.contains("?")) {

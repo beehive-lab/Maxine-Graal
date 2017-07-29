@@ -161,11 +161,11 @@ public class ReadEliminationClosure extends EffectsClosure<ReadEliminationBlockS
 
         private final HashMap<Object, PhiNode> materializedPhis = new HashMap<>();
 
-        public ReadEliminationMergeProcessor(Block mergeBlock) {
+        ReadEliminationMergeProcessor(Block mergeBlock) {
             super(mergeBlock);
         }
 
-        protected <T> PhiNode getCachedPhi(T virtual, Kind kind) {
+        <T> PhiNode getCachedPhi(T virtual, Kind kind) {
             PhiNode result = materializedPhis.get(virtual);
             if (result == null) {
                 result = new PhiNode(kind, merge);

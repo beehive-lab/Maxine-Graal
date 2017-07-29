@@ -30,7 +30,7 @@ public abstract class GraphEvent {
 
     public static class NodeEvent extends GraphEvent {
 
-        public static enum Type {
+        public enum Type {
             ADDED, DELETED, CHANGED
         }
 
@@ -53,7 +53,7 @@ public abstract class GraphEvent {
 
     public static class EdgeEvent extends GraphEvent {
 
-        public static enum Type {
+        public enum Type {
             INPUT, SUCC
         }
 

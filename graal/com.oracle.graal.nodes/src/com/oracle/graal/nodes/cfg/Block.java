@@ -133,7 +133,7 @@ public final class Block {
 
         private FixedNode cur;
 
-        public NodeIterator() {
+        NodeIterator() {
             cur = getBeginNode();
         }
 

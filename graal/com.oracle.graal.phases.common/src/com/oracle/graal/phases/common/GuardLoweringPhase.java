@@ -123,7 +123,7 @@ public class GuardLoweringPhase extends BasePhase<MidTierContext> {
 
         private final Block block;
 
-        public LowerGuards(Block block) {
+        LowerGuards(Block block) {
             this.block = block;
         }
 

@@ -58,7 +58,7 @@ public interface MemoryCheckpoint {
 
     }
 
-    public class TypeAssertion {
+    class TypeAssertion {
 
         public static boolean correctType(Node node) {
             return !(node instanceof MemoryCheckpoint) || (node instanceof MemoryCheckpoint.Single ^ node instanceof MemoryCheckpoint.Multi);

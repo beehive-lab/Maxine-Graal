@@ -163,7 +163,7 @@ public final class ComputeImmediateDominator {
         private final Collection<DominatorInfo> parents;
         private boolean explored;
 
-        public DominatorInfo(FixedNode node, boolean full) {
+        DominatorInfo(FixedNode node, boolean full) {
             this.node = node;
             this.bits = new BitSet();
             this.ownBits = new BitSet();

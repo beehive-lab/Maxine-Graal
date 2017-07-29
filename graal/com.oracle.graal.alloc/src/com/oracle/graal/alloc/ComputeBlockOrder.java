@@ -250,7 +250,7 @@ public final class ComputeBlockOrder {
 
         private final NodesToDoubles probabilities;
 
-        public BlockOrderComparator(NodesToDoubles probabilities) {
+        BlockOrderComparator(NodesToDoubles probabilities) {
             this.probabilities = probabilities;
         }
 

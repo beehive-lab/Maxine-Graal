@@ -52,7 +52,7 @@ public class EliminatePartiallyRedundantGuardsPhase extends Phase {
         final LogicNode conditionNode;
         final boolean negated;
 
-        public Condition(LogicNode conditionNode, boolean negated) {
+        Condition(LogicNode conditionNode, boolean negated) {
             this.conditionNode = conditionNode;
             this.negated = negated;
         }

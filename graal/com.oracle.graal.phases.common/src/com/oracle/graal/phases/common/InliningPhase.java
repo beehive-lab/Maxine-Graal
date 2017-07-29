@@ -336,7 +336,7 @@ public class InliningPhase extends AbstractInliningPhase {
 
         protected final Map<Invoke, Double> hints;
 
-        public AbstractInliningPolicy(Map<Invoke, Double> hints) {
+        AbstractInliningPolicy(Map<Invoke, Double> hints) {
             this.hints = hints;
         }
 
@@ -497,7 +497,7 @@ public class InliningPhase extends AbstractInliningPhase {
         private final Deque<FixedNode> nodeQueue;
         private final NodeBitMap queuedNodes;
 
-        public InliningIterator(FixedNode start, NodeBitMap visitedFixedNodes) {
+        InliningIterator(FixedNode start, NodeBitMap visitedFixedNodes) {
             this.start = start;
             this.nodeQueue = new ArrayDeque<>();
             this.queuedNodes = visitedFixedNodes;
@@ -600,7 +600,7 @@ public class InliningPhase extends AbstractInliningPhase {
 
         private int maxGraphs;
 
-        public InliningData(StructuredGraph rootGraph, Assumptions rootAssumptions) {
+        InliningData(StructuredGraph rootGraph, Assumptions rootAssumptions) {
             this.graphQueue = new ArrayDeque<>();
             this.invocationQueue = new ArrayDeque<>();
             this.maxGraphs = 1;
@@ -742,7 +742,7 @@ public class InliningPhase extends AbstractInliningPhase {
 
         private int processedGraphs;
 
-        public MethodInvocation(InlineInfo info, Assumptions assumptions, double probability, double relevance) {
+        MethodInvocation(InlineInfo info, Assumptions assumptions, double probability, double relevance) {
             this.callee = info;
             this.assumptions = assumptions;
             this.probability = probability;
@@ -812,7 +812,7 @@ public class InliningPhase extends AbstractInliningPhase {
         private NodesToDoubles nodeProbabilities;
         private NodesToDoubles nodeRelevance;
 
-        public GraphInfo(StructuredGraph graph, LinkedList<Invoke> invokes, double probability, double relevance) {
+        GraphInfo(StructuredGraph graph, LinkedList<Invoke> invokes, double probability, double relevance) {
             this.graph = graph;
             this.remainingInvokes = invokes;
             this.probability = probability;
@@ -873,7 +873,7 @@ public class InliningPhase extends AbstractInliningPhase {
 
         private int lowLevelNodes;
 
-        public CompiledMethodInfo() {
+        CompiledMethodInfo() {
         }
 
         public int lowLevelNodeCount() {

@@ -427,7 +427,7 @@ public class InliningUtil {
         private final ResolvedJavaType type;
         private Inlineable inlineableElement;
 
-        public TypeGuardInlineInfo(Invoke invoke, ResolvedJavaMethod concrete, ResolvedJavaType type) {
+        TypeGuardInlineInfo(Invoke invoke, ResolvedJavaMethod concrete, ResolvedJavaType type) {
             super(invoke);
             this.concrete = concrete;
             this.type = type;
@@ -517,8 +517,8 @@ public class InliningUtil {
         private final double notRecordedTypeProbability;
         private final Inlineable[] inlineableElements;
 
-        public MultiTypeGuardInlineInfo(Invoke invoke, ArrayList<ResolvedJavaMethod> concretes, ArrayList<Double> concretesProbabilities, ArrayList<ProfiledType> ptypes,
-                        ArrayList<Integer> typesToConcretes, double notRecordedTypeProbability) {
+        MultiTypeGuardInlineInfo(Invoke invoke, ArrayList<ResolvedJavaMethod> concretes, ArrayList<Double> concretesProbabilities, ArrayList<ProfiledType> ptypes,
+                                 ArrayList<Integer> typesToConcretes, double notRecordedTypeProbability) {
             super(invoke);
             assert concretes.size() > 0 : "must have at least one method";
             assert ptypes.size() == typesToConcretes.size() : "array lengths must match";
@@ -998,7 +998,7 @@ public class InliningUtil {
 
         private final Assumption takenAssumption;
 
-        public AssumptionInlineInfo(Invoke invoke, ResolvedJavaMethod concrete, Assumption takenAssumption) {
+        AssumptionInlineInfo(Invoke invoke, ResolvedJavaMethod concrete, Assumption takenAssumption) {
             super(invoke, concrete);
             this.takenAssumption = takenAssumption;
         }
