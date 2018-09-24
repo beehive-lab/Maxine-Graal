@@ -37,7 +37,7 @@ public class GraphUtil {
     private static final NodePredicate FLOATING = new NodePredicate() {
 
         @Override
-        public final boolean apply(Node n) {
+        public boolean apply(Node n) {
             // isA(FloatingNode.class).or(VirtualState.class).or(CallTargetNode.class)
             return n instanceof FloatingNode || n instanceof VirtualState || n instanceof CallTargetNode;
         }
@@ -194,7 +194,7 @@ public class GraphUtil {
 
     /**
      * Gets an approximate source code location for a node if possible.
-     * 
+     *
      * @return the StackTraceElements if an approximate source location is found, null otherwise
      */
     public static StackTraceElement[] approxSourceStackTraceElement(Node node) {
@@ -224,7 +224,7 @@ public class GraphUtil {
 
     /**
      * Gets an approximate source code location for a node, encoded as an exception, if possible.
-     * 
+     *
      * @return the exception with the location
      */
     public static RuntimeException approxSourceException(Node node, Throwable cause) {
@@ -233,7 +233,7 @@ public class GraphUtil {
         RuntimeException exception = new RuntimeException((cause == null) ? null : cause.getMessage(), cause) {
 
             @Override
-            public final synchronized Throwable fillInStackTrace() {
+            public synchronized Throwable fillInStackTrace() {
                 setStackTrace(elements);
                 return this;
             }
@@ -243,7 +243,7 @@ public class GraphUtil {
 
     /**
      * Gets an approximate source code location for a node if possible.
-     * 
+     *
      * @return a file name and source line number in stack trace format (e.g. "String.java:32") if
      *         an approximate source location is found, null otherwise
      */
@@ -260,7 +260,7 @@ public class GraphUtil {
 
     /**
      * Returns a string representation of the given collection of objects.
-     * 
+     *
      * @param objects The {@link Iterable} that will be used to iterate over the objects.
      * @return A string of the format "[a, b, ...]".
      */
@@ -279,7 +279,7 @@ public class GraphUtil {
 
     /**
      * Gets the original value by iterating through all {@link ValueProxy ValueProxies}.
-     * 
+     *
      * @param value The start value.
      * @return The first non-proxy value encountered.
      */
@@ -295,7 +295,7 @@ public class GraphUtil {
      * Tries to find an original value of the given node by traversing through proxies and
      * unambiguous phis. Note that this method will perform an exhaustive search through phis. It is
      * intended to be used during graph building, when phi nodes aren't yet canonicalized.
-     * 
+     *
      * @param proxy The node whose original value should be determined.
      */
     public static ValueNode originalValue(ValueNode proxy) {
