@@ -150,7 +150,7 @@ from threading import Thread
 from argparse import ArgumentParser, REMAINDER
 from os.path import join, basename, dirname, exists, getmtime, isabs, expandvars, isdir, isfile
 
-DEFAULT_JAVA_ARGS = '-ea -Xss2m -Xmx1g'
+DEFAULT_JAVA_ARGS = '-ea -Xss2m -Xmx2g'
 
 _projects = dict()
 _libs = dict()
