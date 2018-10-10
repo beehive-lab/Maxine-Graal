@@ -71,11 +71,11 @@ public class ServiceProviderProcessor extends AbstractProcessor {
     }
 
     private void createProviderFile(TypeElement serviceProvider, String interfaceName) {
-        String filename = "META-INF/providers/" + serviceProvider.getQualifiedName();
+        String filename = "META-INF/services/" + interfaceName;
         try {
             FileObject file = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", filename, serviceProvider);
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(file.openOutputStream(), "UTF-8"));
-            writer.println(interfaceName);
+            writer.println(serviceProvider.getQualifiedName());
             writer.close();
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage(), serviceProvider);
