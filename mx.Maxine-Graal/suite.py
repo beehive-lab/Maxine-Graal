@@ -51,7 +51,7 @@ suite = {
     "libraries": {
 
         "DACAPO": {
-            "urls": ["http://softlayer.dl.sourceforge.net/project/dacapobench/9.12-bach/dacapo-9.12-bach.jar"],
+            "urls": ["https://downloads.sourceforge.net/project/dacapobench/archive/9.12-bach/dacapo-9.12-bach.jar"],
             "path": "lib/dacapo-9.12-bach.jar",
             "sha1": "2626a9546df09009f6da0df854e6dc1113ef7dd4",
         },
