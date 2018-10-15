@@ -29,6 +29,7 @@ suite = {
         "write": "git@github.com:beehive-lab/Maxine-Graal.git",
     },
     "outputRoot": "./",
+    "javac.lint.overrides": "none",
 
     "licenses": {
         "GPLv2": {
